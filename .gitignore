@@ -1,0 +1,31 @@
+# local env files
+.env.local
+.env.*.local
+.env.*
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+*/error_log
+error_log
+ads.txt
+php/configDb.php
+node_modules
+.DS_Store
+
+dist/
+node_modules
+
+.env.*
