@@ -1,7 +1,3 @@
-<template>
-	<div class="simple-keyboard"></div>
-</template>
-
 <script setup lang="ts">
 import Keyboard from "simple-keyboard";
 import "simple-keyboard/build/css/index.css";
@@ -42,6 +38,10 @@ watch(
 	{ deep: true }
 );
 </script>
+
+<template>
+	<div class="simple-keyboard"></div>
+</template>
 
 <style>
 div.miss {
