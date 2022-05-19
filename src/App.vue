@@ -5,22 +5,41 @@ import { reactive, onMounted } from "vue";
 
 const state = reactive({
 	solution: "books",
-	guesses: ["", "", "", "", ""],
+	guesses: ["", "", "", "", "", ""],
 	currentGuessIndex: 0,
+	guessedLetters: {
+		miss: [],
+		found: [],
+		hint: [],
+	},
 });
 
 const handleInput = (key) => {
 	const currentGuess = state.guesses[state.currentGuessIndex];
-
 	if (key == "{enter}") {
 		// Submit the current guess
+		if (currentGuess.length == 5) {
+			state.currentGuessIndex++;
+			setTimeout(() => {
+				for (var i = 0; i < currentGuess.length; i++) {
+					let c = currentGuess.charAt(i);
+					if (c == state.solution.charAt(i)) {
+						state.guessedLetters.found.push(c);
+					} else if (state.solution.indexOf(c) != -1) {
+						state.guessedLetters.hint.push(c);
+					} else {
+						state.guessedLetters.miss.push(c);
+					}
+				}
+			}, 250);
+		}
 	} else if (state.currentGuessIndex >= 6) {
 		return;
 	} else if (key == "{bksp}") {
 		state.guesses[state.currentGuessIndex] = currentGuess.slice(0, -1); // remove last character
 	} else if (currentGuess.length < 5) {
 		if (/[a-zA-Z]/.test(key)) {
-			state.guesses[state.currentGuessIndex] += key;
+			state.guesses[state.currentGuessIndex] += key; // add character
 		}
 	}
 };
@@ -29,11 +48,11 @@ onMounted(() => {
 	window.addEventListener("keyup", (e) => {
 		e.preventDefault();
 		let key =
-			e.key == "enter"
+			e.keyCode == 13
 				? "{enter}"
-				: e.key == "backspace"
+				: e.keyCode == 8
 				? "{bksp}"
-				: e.key.toLowerCase();
+				: String.fromCharCode(e.keyCode).toLowerCase();
 		handleInput(key);
 	});
 });
@@ -50,7 +69,10 @@ onMounted(() => {
 				:submitted="i < state.currentGuessIndex"
 			/>
 		</div>
-		<SimpleKeyboard @onKeyPress="handleInput" />
+		<SimpleKeyboard
+			@onKeyPress="handleInput"
+			:guessedLetters="state.guessedLetters"
+		/>
 	</div>
 </template>
 

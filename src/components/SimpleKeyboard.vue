@@ -1,9 +1,17 @@
+<template>
+	<div class="simple-keyboard"></div>
+</template>
+
 <script setup lang="ts">
 import Keyboard from "simple-keyboard";
 import "simple-keyboard/build/css/index.css";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 
 const emit = defineEmits(["onKeyPress"]);
+
+const props = defineProps({
+	guessedLetters: Object,
+});
 
 const keyboard = ref(null);
 
@@ -23,11 +31,31 @@ onMounted(() => {
 		onKeyPress: onKeyPress,
 	});
 });
+
+watch(
+	() => props.guessedLetters,
+	(guessedLetters, prevGuessedLetters) => {
+		keyboard.value.addButtonTheme(guessedLetters.miss.join(" "), "miss");
+		keyboard.value.addButtonTheme(guessedLetters.found.join(" "), "found");
+		keyboard.value.addButtonTheme(guessedLetters.hint.join(" "), "hint");
+	},
+	{ deep: true }
+);
 </script>
 
-<template>
-	<div class="simple-keyboard"></div>
-</template>
+<style>
+div.miss {
+	@apply bg-gray-500 !important;
+	@apply text-white;
+}
 
-<style scoped>
+div.found {
+	@apply bg-green-600 !important;
+	@apply text-white;
+}
+
+div.hint:not(.found) {
+	@apply bg-yellow-500 !important;
+	@apply text-white;
+}
 </style>
