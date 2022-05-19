@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SimpleKeyboard from "./components/SimpleKeyboard.vue";
 import WordRow from "./components/WordRow.vue";
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, computed } from "vue";
 
 const state = reactive({
 	solution: "books",
@@ -14,7 +14,18 @@ const state = reactive({
 	},
 });
 
+const wonGame = computed(() => {
+	return state.guesses[state.currentGuessIndex - 1] === state.solution;
+});
+
+const lostGame = computed(
+	() => !wonGame.value && state.guessedLetters.miss.length >= 6
+);
+
 const handleInput = (key) => {
+	if (state.currentGuessIndex >= 6 || wonGame.value) {
+		return;
+	}
 	const currentGuess = state.guesses[state.currentGuessIndex];
 	if (key == "{enter}") {
 		// Submit the current guess
@@ -69,6 +80,8 @@ onMounted(() => {
 				:submitted="i < state.currentGuessIndex"
 			/>
 		</div>
+		<p v-if="wonGame" class="text-center">🏆 Congrats you solved it!</p>
+		<p v-else-if="lostGame" class="text-center">😔 Out of tries.</p>
 		<SimpleKeyboard
 			@onKeyPress="handleInput"
 			:guessedLetters="state.guessedLetters"
